@@ -1,0 +1,213 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Index</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'nav.css' %}"/>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">Yublles</a>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/sellProduct/1">Sell</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Best Sellers
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="#">Electronics</a></li>
+                      <li><a class="dropdown-item" href="#">Clothing</a></li>
+                      <li><a class="dropdown-item" href="#">Footware</a></li>
+                      <li><a class="dropdown-item" href="#">Home Accessory</a></li>
+                      <li><a class="dropdown-item" href="#">Vehicle Accessory</a></li>
+                      <li><a class="dropdown-item" href="#">Toys</a></li>
+                      <li><a class="dropdown-item" href="#">Sport Equipments</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                  </li>
+                </ul>
+                <form class="d-flex">
+                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                  <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+
+                <li class="nav-welcome">
+                    <p>Welcome {{ username }}</p>
+                </li>
+
+                <li class="nav-logout">
+                    <a class="btn btn-warning" href="{% url 'logout' %}">Logout</a>
+                </li>
+              </div>
+            </div>
+        </nav>
+        <br><br><br><br><br>
+        <div class="container">
+        {% if seller %}
+          <div class="row">
+            <div class="add-button" style="text-align: center;">
+              <h3>Sell Your Product</h3>
+              <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal2" style="padding: 40px; border-radius: 100px;">+</button>
+            </div>
+            <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="/sellProduct/{{current_page}}/" method="POST" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <div class="form-group">
+                        <label for="prodname">Product Name</label>
+                        <input type="text" class="form-control" id="prodname" name="Productname" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="prodcond">Product Condition</label>
+                        <select class="form-control" id="prodcond" name="ProductCondition" required>
+                          <option>New</option>
+                          <option>Used</option>
+                          <option>Refurbished</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="prodtype">Example select</label>
+                        <select class="form-control" id="prodtype" name="ProductType" required>
+                          <option>Electronics</option>
+                          <option>Clothing</option>
+                          <option>Footware</option>
+                          <option>Home Accessory</option>
+                          <option>Vehicle Accessory</option>
+                          <option>Toys</option>
+                          <option>Sport Equipment</option>
+                        </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="prodDetail">Product Details</label>
+                        <textarea class="form-control" id="prodDetail" rows="3" name="ProductDetail" required></textarea>
+                      </div>
+                      <div class="form-group">
+                        <label for="prodprice">Product Price</label>
+                        <input type="number" class="form-control" id="prodage" name="ProductPrice" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="prodimg">Product Image</label>
+                        <input type="file" class="form-control" id="prodimg" name="ProductImage" required>
+                      </div>
+                      <div class="form-group">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-danger">Sell</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="listing" style="text-align: center;">
+              <h3>Current Listings</h3>
+            </div>
+          </div>
+          {% else %}
+          <div class="row" style="text-align: center;">
+            <h1>Want To Sell Products With Us? Join Below!</h1>
+            <a class="btn btn-primary" type="button" href="/sellerReg/">Join</a>
+          </div>
+          {% endif %}
+          <div class="row">
+          {% if products is not null %}
+            {% for product in products %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text">{{ product.detail }}</p>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Type: {{ product.type }}</li>
+                            <li class="list-group-item">Age: {{ product.condition }}</li>
+                            <li class="list-group-item">Price: Rs.{{ product.price }}</li>
+                        </ul>
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#Modal{{ product.id }}">Delete</button>
+                        <div class="modal fade" id="Modal{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+                              </div>
+                              <div class="modal-body">
+                                <h4>Are you sure you want to unlist your product?</h4>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <form action="/deleteProduct/{{product.id}}/" method="POST">
+                                  {% csrf_token %}
+                                  <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+          {% else %}
+          <div class="row">
+            <h4>No Current Listings</h4>
+          </div>
+          {% endif %}
+        </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+              <div class="page-nav d-flex justify-content-center fixed-bottom">
+                  <nav aria-label="...">
+                      <ul class="pagination">
+                          <li class="page-item {% if not products.has_previous %} disabled {% endif %}">
+                              <a class="page-link" href="{% if products.has_previous %}{% url 'sellProduct' products.previous_page_number %}{% else %}#{% endif %}" tabindex="-1">Previous</a>
+                          </li>
+                          {% for num in products.paginator.page_range %}
+                              <li class="page-item {% if products.number == num %} active {% endif %}">
+                                  <a class="page-link" href="{% url 'sellProduct' num %}">{{ current_page }}</a>
+                              </li>
+                          {% endfor %}
+                          <li class="page-item {% if not products.has_next %} disabled {% endif %}">
+                              <a class="page-link" href="{% if products.has_next %}{% url 'sellProduct' products.next_page_number %}{% else %}#{% endif %}">Next</a>
+                          </li>
+                      </ul>
+                  </nav>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script>
+          document.addEventListener("DOMContentLoaded", function() {
+            const contentContainer = document.querySelector('.content-container'); // Adjust the selector based on your structure
+
+            function isOverflowing(element) {
+              return element.scrollHeight > element.clientHeight || element.scrollWidth > element.clientWidth;
+            }
+
+            if (isOverflowing(contentContainer)) {
+            // Redirect to next page if content overflows
+              let nextPage = parseInt('{{ current_page }}') + 1;
+                window.location.href = `/sellProduct/${nextPage}`;
+              }
+            });
+        </script>
+    </body>
+</html>
+

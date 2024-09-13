@@ -1,0 +1,16 @@
+.nav-item{
+    font-size: 20px;
+    padding-left: 150px;
+}
+
+.nav-logout{
+    list-style: none;
+    padding-left: 50px;
+}
+
+.nav-welcome{
+    list-style: none;
+    padding-left: 50px;
+    font-size: 20px;
+    padding-top: 10px;
+}

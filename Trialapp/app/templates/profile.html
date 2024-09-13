@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Index</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'nav.css' %}"/>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="#">Yublles</a>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/sellProduct/1">Sell</a>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Best Sellers
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <li><a class="dropdown-item" href="#">Electronics</a></li>
+                      <li><a class="dropdown-item" href="#">Clothing</a></li>
+                      <li><a class="dropdown-item" href="#">Footware</a></li>
+                      <li><a class="dropdown-item" href="#">Home Accessory</a></li>
+                      <li><a class="dropdown-item" href="#">Vehicle Accessory</a></li>
+                      <li><a class="dropdown-item" href="#">Toys</a></li>
+                      <li><a class="dropdown-item" href="#">Sport Equipments</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                  </li>
+                </ul>
+                <form class="d-flex">
+                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                  <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+
+                <li class="nav-welcome">
+                    <p>Welcome {{ username }}</p>
+                </li>
+
+                <li class="nav-logout">
+                    <a class="btn btn-warning" href="{% url 'logout' %}">Logout</a>
+                </li>
+              </div>
+            </div>
+        </nav>
+        <br><br><br><br><br>
+        <div class="container">
+            <div class="row">
+                <div class="col-4">
+                  {% if is_seller %}
+                      <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                          <h5 class="card-title">My Profile</h5>
+                          <p class="card-text"><strong>Username:</strong> {{ username }}</p>
+                          <p class="card-text"><strong>Email:</strong> {{ email }}</p>
+                          <p class="card-text"><strong>Account Created At:</strong> {{ created_at }}</p>
+                          <p class="card-text"><strong>Products Bought:</strong> {{ prod_bought }}</p>
+                          <p class="card-text"><strong>Products Listed:</strong>{{ prod_listed }}</p>
+                          <p class="card-text"><strong>Products Sold:</strong> {{ prod_sold }}</p>
+                          <p class="card-text"><strong>Seller Type:</strong>{{seller_type}}</p>
+                          <p class="card-text"><strong>Company Name:</strong>{{company_name}}</p>
+                        </div>
+                        <div class="card-footer" style="text-align: center;">
+                          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                              Delete
+                          </button>
+                          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Delete Account</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  Are you sure you want to delete this account?
+                                  All your orders and products listed will be cancelled!!
+                                </div>
+                                <div class="modal-footer">
+                                  <form action="/deleteProfile/" method="POST">
+                                    {% csrf_token %}
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                  </form>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  {% else %}
+                    <div class="card" style="width: 18rem;">
+                      <div class="card-body">
+                        <h5 class="card-title">My Profile</h5>
+                        <p class="card-text"><strong>Username:</strong> {{ username }}</p>
+                        <p class="card-text"><strong>Email:</strong> {{ email }}</p>
+                        <p class="card-text"><strong>Account Created At:</strong> {{ created_at }}</p>
+                        <p class="card-text"><strong>Products Bought:</strong> {{ prod_bought }}</p>
+                      </div>
+                      <div class="card-footer" style="text-align: center;">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Delete
+                        </button>
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Delete Account</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                Are you sure you want to delete this account?
+                                All your orders and products listed will be cancelled!!
+                              </div>
+                              <div class="modal-footer">
+                                <form action="/deleteProfile/" method="POST">
+                                  {% csrf_token %}
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    </body>
+</html>
