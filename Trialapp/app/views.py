@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from .forms import Signup
+from django.views.decorators.csrf import csrf_exempt,csrf_protect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
@@ -7,6 +8,8 @@ from datetime import datetime
 from .models import Profile,Product,SellingUser,Cart
 from django.core.paginator import Paginator,PageNotAnInteger, EmptyPage
 from uuid import uuid4
+from django.http import JsonResponse
+import json
 
 
 def signup(request):
@@ -67,6 +70,7 @@ def index(request,page=1):
 def user_profile(request):
     user = SellingUser.objects.get(id = request.user.id)
     profile = Profile.objects.get(user_profile = user)
+
     context = {
         'username' : user.username,
         'email' : user.email,
@@ -79,6 +83,29 @@ def user_profile(request):
         'is_seller' : user.is_seller,
     }
     return render(request, 'profile.html', context)
+
+@login_required
+@csrf_protect
+def update_profile(request):
+    if request.method == "PATCH":
+        user = SellingUser.objects.get(id=request.user.id)
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            username = data.get('username')
+            email = data.get('email')
+            if username:
+                if SellingUser.objects.filter(username=username).exclude(id=user.id).exists():
+                    return JsonResponse({"error": "Username already exists"}, status=400)
+                user.username = username
+            if email:
+                user.email = email
+            user.save()
+            return JsonResponse({"success": "Profile updated successfully"})
+        except SellingUser.DoesNotExist:
+            return JsonResponse({"error": "User not found"}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON"}, status=400)
+    return JsonResponse({"error": "Invalid method"}, status=405)
 
 @login_required
 def register_seller(request):
@@ -166,25 +193,76 @@ def delete_product(request , prod_id):
 @login_required
 def checkout_product(request , prod_id):
     product = Product.objects.get(id = prod_id)
-    seller = SellingUser.objects.get(id = request.user.id)
-    if request.method == 'POST':
-        if(product.id):
-            product_price = product.price
-            cart = Cart(
-                quantity = 1,
-                price = product_price,
-            )
-            cart.save()
-        return render(request, 'checkout.html')
+    if request.method == "POST":
+        user = SellingUser.objects.get(id = request.user.id)
+        cart_item, created = Cart.objects.get_or_create(user = user,prod=product, quantity=1, price=product.price)
+        if not created:
+            cart_item.quantity += 1
+            cart_item.save()
+        return redirect('/checkout/')
 
+    return render(request,'checkout.html')
+
+@login_required
+def checkout(request):
+    user= SellingUser.objects.get(id=request.user.id)
+    cart = Cart.objects.filter(user = user)
+    print(cart.values())
+    total_price = sum(item.price * item.quantity for item in cart)
     context = {
-                'product_name' : product.name,
-                'product_condition' : product.conditon,
-                'product_type' : product.type,
-                'product_detail' : product.detail,
-                'product_price' : product.price,
-                'product_image' : product.image,
-                'product_seller' : seller.company_name,
+                'total_price': total_price,
+                'cart' : cart,
             }
-
     return render(request,'checkout.html',context)
+
+@login_required
+def update_cart(request):
+    if request.method == "POST":
+        user = SellingUser.objects.get(id=request.user.id)
+        cart = Cart.objects.filter(user = user)
+        total_price = 0
+        for item in cart:
+            quantity = request.POST.get(f'quantity_{item.prod.id}')
+            if quantity:
+                item.quantity = int(quantity)
+                print(item.quantity)
+                item.save()
+            total_price += item.price * item.quantity
+        print(total_price)
+        context = {
+            'total_price' : total_price,
+            'cart' : cart
+        }
+        return render(request,'checkout.html', context)
+    return render(request, 'checkout.html', context)
+
+@login_required
+def remove_cart_item(request,cart_id):
+    if request.method == "POST":
+        cart = Cart.objects.get(id=cart_id)
+        cart.quantity = 0
+        cart.delete()
+        return redirect('/checkout/')
+    return render(request,'checkout.html')
+
+@login_required
+def to_payment(request):
+    user = SellingUser.objects.get(id = request.user.id)
+    user_cart_products = Cart.objects.filter(user=user).select_related('prod')
+    prices = [ x.price for x in user_cart_products]
+    names = [ x.prod.name for x in user_cart_products]
+    print(prices)
+    print(names)
+    context = {
+        'price' : prices,
+        'names' : names
+    }
+    return render(request, 'payment.html', context)
+
+
+@login_required
+def product_page(request,prod_id):
+    product = Product.objects.get(id = prod_id)
+    return render(request, 'productpage.html', {'product':product})
+
+

@@ -14,3 +14,24 @@
     font-size: 20px;
     padding-top: 10px;
 }
+
+.cart-nav .btn {
+    position: relative;
+    color: #333;
+    font-size: 1.2rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.cart-nav .btn i {
+    margin-right: 8px;
+}
+
+.cart-nav .btn:hover {
+    color: #007bff;
+}
+
+.cart-nav{
+    list-style: none;
+}

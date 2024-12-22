@@ -73,6 +73,7 @@ class Profile(models.Model):
     prod_sold = models.PositiveIntegerField(default=0)
 
 class Cart(models.Model):
+    user = models.ForeignKey(SellingUser, on_delete=models.PROTECT, default=None)
     prod = models.ForeignKey(Product, on_delete=models.PROTECT, default=None)
     quantity = models.PositiveIntegerField(default=1)
     price = models.DecimalField(max_digits=10,decimal_places=2)

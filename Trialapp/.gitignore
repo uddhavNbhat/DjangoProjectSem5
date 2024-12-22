@@ -1,0 +1,27 @@
+# Python bytecode files and cache
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Django elements:
+*.log
+*.pot
+*.pyc
+__pycache__
+db.sqlite3
+/static/
+media/
+
+# Environment variables
+.env
+
+# VSCode settings
+.vscode/
+
+# IDE settings
+.idea/
+*.swp
+
+# Virtual environment folder
+venv/
