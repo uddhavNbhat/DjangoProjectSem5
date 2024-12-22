@@ -62,7 +62,7 @@
                     <a class="nav-link active" aria-current="page" href="/">Home</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/sellProduct/1">Sell</a>
+                    <a class="nav-link" href="/product/sell/1">Sell</a>
                   </li>
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -96,7 +96,7 @@
                 </li>
 
                 <li class="cart-nav" style="list-style: none; padding-left: 10px;">
-                  <a class="btn" href="/checkout/"><i class="fas fa-shopping-cart"></i> Cart</a>
+                  <a class="btn" href="/cart/"><i class="fas fa-shopping-cart"></i> Cart</a>
                 </li>
               </div>
             </div>
@@ -109,7 +109,7 @@
           <div class="row justify-content-center text-center">
             {% for product in cart %}
             <div class="col-12 col-md-4 col-lg-3 mb-4">
-                <a href="/product_page/{{ product.id }}" style="text-decoration: none;">
+                <a href="/product/{{ product.id }}" style="text-decoration: none;">
                     <div class="card">
                         <img src="{{ product.prod.image.url }}" class="card-img-top" alt="{{ product.prod.name }}">
                         <div class="card-body">
@@ -120,7 +120,7 @@
                         </div>
                         <div class="card-footer d-flex justify-content-between align-items-center">
                           <div>
-                            <form method="POST" action="/checkout/update/">
+                            <form method="POST" action="/cart/update/">
                               {% csrf_token %}
                               <button class="btn btn-secondary" onclick="decrementQuantity({{ forloop.counter }})">-</button>
                               <input type="number" id="quantity-{{ forloop.counter }}" class="form-control d-inline w-25 text-center" value="{{ product.quantity }}" min="1" max="1000" name="quantity_{{ product.prod.id }}" readonly>
@@ -128,7 +128,7 @@
                               <button class="btn btn-secondary" onclick="incrementQuantity( {{ forloop.counter }} )">+</button>
                             </form>
                           </div>
-                          <form method="POST" action="/remove_item/{{ product.id }}/">
+                          <form method="POST" action="/cart/delete/{{ product.id }}/">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-danger">Delete</button>
                           </form>

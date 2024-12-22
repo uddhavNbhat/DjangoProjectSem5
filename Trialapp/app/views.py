@@ -11,7 +11,7 @@ from uuid import uuid4
 from django.http import JsonResponse
 import json
 
-
+#signup view
 def signup(request):
     if request.method == 'POST':
         form = Signup(request.POST)
@@ -34,6 +34,7 @@ def signup(request):
 
     return render(request, 'signup.html', {'form': form})
 
+#login view
 def user_login(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -51,6 +52,7 @@ def user_login(request):
 
     return render(request, 'login.html')
 
+# main page view(index) and applied paginator from django
 @login_required
 def index(request,page=1):
     username = request.user.username
@@ -65,7 +67,7 @@ def index(request,page=1):
 
     return render(request, 'index.html', {'username': username, 'products': products,'current_page': page,'total_pages': paging.num_pages})
 
-
+# user profile view
 @login_required
 def user_profile(request):
     user = SellingUser.objects.get(id = request.user.id)
@@ -84,6 +86,7 @@ def user_profile(request):
     }
     return render(request, 'profile.html', context)
 
+#user profile update view using PATCH function through json content
 @login_required
 @csrf_protect
 def update_profile(request):
@@ -107,11 +110,12 @@ def update_profile(request):
             return JsonResponse({"error": "Invalid JSON"}, status=400)
     return JsonResponse({"error": "Invalid method"}, status=405)
 
+# register seller through uuid
 @login_required
 def register_seller(request):
     selling_user = SellingUser.objects.get(id = request.user.id)
     if selling_user.is_seller:
-        return redirect("/sellProduct/1/")
+        return redirect("/product/sell/1/")
     if request.method == 'POST':
         company_name = request.POST['EnterpriseName']
         seller_type = request.POST['SellerType']
@@ -121,10 +125,11 @@ def register_seller(request):
         if selling_user.seller_uid is None:
             selling_user.seller_uid = uuid4()
         selling_user.save()
-        return redirect("/sellProduct/1/")
+        return redirect("/product/sell/1/")
 
     return render(request, "seller.html")
 
+# delete user profile/account
 @login_required
 def delete_user(request):
     if request.method == 'POST':
@@ -134,16 +139,18 @@ def delete_user(request):
     else:
         return redirect('/profile/')
 
+#logut
 @login_required
 def user_logout(request):
     logout(request)
     return redirect('/login/')
 
+#sell a product as a seller, applied pagination from django
 @login_required
 def sell_product(request, page=1):
     selling_user = SellingUser.objects.get(id = request.user.id)
     if not selling_user.seller_uid:
-        return redirect('/sellerReg/')
+        return redirect('/seller/register/')
     if request.method == 'POST':
         product_name = request.POST["Productname"]
         product_condition = request.POST["ProductCondition"]
@@ -180,6 +187,7 @@ def sell_product(request, page=1):
         'seller': selling_user.is_seller,
     })
 
+# delete product
 @login_required
 def delete_product(request , prod_id):
     if request.method == 'POST':
@@ -188,8 +196,9 @@ def delete_product(request , prod_id):
         profile.prod_listed = profile.prod_listed - 1
         profile.save()
         product.delete()
-        return redirect("/sellProduct/1/")
+        return redirect("/product/sell/1/")
 
+# checkout cart functionality
 @login_required
 def checkout_product(request , prod_id):
     product = Product.objects.get(id = prod_id)
@@ -199,10 +208,11 @@ def checkout_product(request , prod_id):
         if not created:
             cart_item.quantity += 1
             cart_item.save()
-        return redirect('/checkout/')
+        return redirect('/cart/')
 
     return render(request,'checkout.html')
 
+# view cart functionality
 @login_required
 def checkout(request):
     user= SellingUser.objects.get(id=request.user.id)
@@ -215,6 +225,7 @@ def checkout(request):
             }
     return render(request,'checkout.html',context)
 
+# update cart items
 @login_required
 def update_cart(request):
     if request.method == "POST":
@@ -236,15 +247,17 @@ def update_cart(request):
         return render(request,'checkout.html', context)
     return render(request, 'checkout.html', context)
 
+# remove cart items
 @login_required
 def remove_cart_item(request,cart_id):
     if request.method == "POST":
         cart = Cart.objects.get(id=cart_id)
         cart.quantity = 0
         cart.delete()
-        return redirect('/checkout/')
+        return redirect('/cart/')
     return render(request,'checkout.html')
 
+#move to payment portal
 @login_required
 def to_payment(request):
     user = SellingUser.objects.get(id = request.user.id)
@@ -259,7 +272,7 @@ def to_payment(request):
     }
     return render(request, 'payment.html', context)
 
-
+# view product page
 @login_required
 def product_page(request,prod_id):
     product = Product.objects.get(id = prod_id)

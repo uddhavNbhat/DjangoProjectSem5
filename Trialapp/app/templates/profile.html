@@ -23,7 +23,7 @@
                     <a class="nav-link active" aria-current="page" href="/">Home</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/sellProduct/1">Sell</a>
+                    <a class="nav-link" href="/product/sell/1/">Sell</a>
                   </li>
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -55,8 +55,8 @@
                 <li class="nav-logout">
                     <a class="btn btn-warning" href="{% url 'logout' %}">Logout</a>
                 </li>
-                <li class="cart-nav style="list-style: none; padding-left: 10px;"">
-                  <a class="btn" href="/checkout/"><i class="fas fa-shopping-cart"></i> Cart</a>
+                <li class="cart-nav" style="list-style: none; padding-left: 10px;">
+                  <a class="btn" href="/cart/"><i class="fas fa-shopping-cart"></i> Cart</a>
                 </li>
               </div>
             </div>
@@ -97,7 +97,7 @@
                                   All your orders and products listed will be cancelled!!
                                 </div>
                                 <div class="modal-footer">
-                                  <form action="/deleteProfile/" method="POST">
+                                  <form action="/profile/delete/" method="POST">
                                     {% csrf_token %}
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-danger">Delete</button>
@@ -172,7 +172,7 @@
                                 All your orders and products listed will be cancelled!!
                               </div>
                               <div class="modal-footer">
-                                <form action="/deleteProfile/" method="POST">
+                                <form action="/profile/delete/" method="POST">
                                   {% csrf_token %}
                                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                   <button type="submit" class="btn btn-danger">Delete</button>
@@ -253,7 +253,7 @@
               data[key] = value;
             });
 
-            axios.patch('/updateProfile/', data, {
+            axios.patch('/profile/update/', data, {
               headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken') // Include CSRF token for security

@@ -17,7 +17,7 @@
                     <a class="nav-link active" aria-current="page" href="/">Home</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="/sellProduct/1">Sell</a>
+                    <a class="nav-link" href="/product/sell/1">Sell</a>
                   </li>
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -50,7 +50,7 @@
                     <a class="btn btn-warning" href="{% url 'logout' %}">Logout</a>
                 </li>
                 <li class="cart-nav" style="list-style: none; padding-left: 10px;">
-                  <a class="btn" href="/checkout/"><i class="fas fa-shopping-cart"></i> Cart</a>
+                  <a class="btn" href="/cart/"><i class="fas fa-shopping-cart"></i> Cart</a>
                 </li>
               </div>
             </div>
@@ -71,7 +71,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <form action="/sellProduct/{{current_page}}/" method="POST" enctype="multipart/form-data">
+                    <form action="/product/sell/{{current_page}}/" method="POST" enctype="multipart/form-data">
                       {% csrf_token %}
                       <div class="form-group">
                         <label for="prodname">Product Name</label>
@@ -127,7 +127,7 @@
           {% else %}
           <div class="row" style="text-align: center;">
             <h1>Want To Sell Products With Us? Join Below!</h1>
-            <a class="btn btn-primary" type="button" href="/sellerReg/">Join</a>
+            <a class="btn btn-primary" type="button" href="/seller/register/">Join</a>
           </div>
           {% endif %}
           <div class="row">
@@ -156,7 +156,7 @@
                               </div>
                               <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <form action="/deleteProduct/{{product.id}}/" method="POST">
+                                <form action="/product/delete/{{product.id}}/" method="POST">
                                   {% csrf_token %}
                                   <button type="submit" class="btn btn-danger">Delete</button>
                                 </form>
