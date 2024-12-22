@@ -24,4 +24,4 @@ media/
 *.swp
 
 # Virtual environment folder
-venv/
+../djangoenv/
